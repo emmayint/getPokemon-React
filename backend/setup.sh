@@ -1,0 +1,2 @@
+export IMG_API_KEY="acc_10a7474b9cbe883"
+export IMG_API_SECRET="2f89a71e8ae7e197f7e7e21f5d7575e8"
