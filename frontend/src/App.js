@@ -1,25 +1,24 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import { Switch, Route, Link } from 'react-router-dom';
+import PokeApi from './pokeapi.js';
+import Home from './home.js';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <React.Fragment>
+      <div className="App">
+        <div className="nav">
+          <span className="nav-logo">Homework 2 </span>
+          <span className="nav-link"><Link to="/">Home</Link></span>
+          <span className="nav-link"><Link to="/pokeapi">PokeApi</Link></span>
+        </div>
+      </div>
+      <Switch>
+        <Route path="/pokeapi" component={PokeApi}/>
+        <Route path="/" component={Home}/>
+      </Switch>
+    </React.Fragment>
   );
 }
 
