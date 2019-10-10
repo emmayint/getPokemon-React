@@ -10,10 +10,19 @@ app.use((req, res, next) => {
     next();
 });
 
+// static serving
+app.use((req, res, next) => {
+    express.static(path.join(__dirname, 'build'));
+});
+
 app.get('/', (req, res) => res.send('Hello From Express!'));
 
 app.get('/image_recognition', image_recognition);
 
 app.get('/twitter', twitter);
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'build/index.html'));
+});
 
 app.listen(port, () => console.log(`Apollow 2 listening on port ${port}!`));
