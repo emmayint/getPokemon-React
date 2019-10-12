@@ -1,25 +1,25 @@
 import React from 'react';
 import axios from 'axios';
 
-const PORT = process.env.PORT_NUMBER || 80;
-
-const PokeApi = () => {
+const ImageRecognition = () => {
 
     const [ isLoading, setIsLoading ] = React.useState(false);
-    const [ userInput, setUserInput ] = React.useState('');
+    const [ userInput, setUserInput ] = React.useState('https://www.mammothoutlet.com/wp-content/uploads/2017/12/bed-size-chart.png');
     const [ response, setResponse ] = React.useState({});
+
+    const PORT = 4000;
 
     const handleRecognize = (input) => {
         setIsLoading(true);
         axios({
-            url: `https://localhost:${PORT}/image_recognition?image_url=${input}`,
+            url: `http://localhost:${PORT}/image_recognition?image_url=${input.userInput}`,
             method: 'get',
             responseType: 'json'
         }).then((res) => {
-            if ( res.status === "OK" ) {
+            if ( res.data.status === "OK" ) {
                 setResponse({
                     message: "Response successful.",
-                    body: res.response
+                    body: res.data
                 });
             } else {
                 setResponse({
@@ -37,7 +37,16 @@ const PokeApi = () => {
 
     const getResponseJsx = (res) => {
         if ( res.body ) {
-            
+            return (
+                <div>
+                    {res.body.response.map((category, i) => (
+                        <div key={i}>
+                            <strong>{category.tag.en}</strong>:
+                            <p>{category.confidence}</p>
+                        </div>
+                    ))}
+                </div>
+            );
         }
         // else is an error with a message.
         return (<div>
@@ -71,4 +80,4 @@ const PokeApi = () => {
     )
 }
 
-export default PokeApi
+export default ImageRecognition
