@@ -39,10 +39,11 @@ const ImageRecognition = () => {
         if ( res.body ) {
             return (
                 <div>
+                    <img src={userInput} alt={userInput} class="image"/>
                     {res.body.response.map((category, i) => (
                         <div key={i}>
-                            <strong>{category.tag.en}</strong>:
-                            <p>{category.confidence}</p>
+                            <strong>{category.tag.en}</strong>
+                            <p>Confidence: {category.confidence}</p>
                         </div>
                     ))}
                 </div>
