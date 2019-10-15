@@ -1,22 +1,24 @@
-const express = require('express');
+const express = require("express");
+const path = require("path");
 const app = express();
-const image_recognition = require('./image_recognition.js');
-const pokemon = require('./pokemon.js');
-const pokeapi = require('./pokeapi.js');
+const image_recognition = require("./image_recognition.js");
+const pokeapi = require("./pokeapi.js");
+const cors = require("cors");
 
-const port = process.env.PORT_NUMBER || 80;
-
+const port = 4000;
+app.use(cors());
 app.use((req, res, next) => {
-    console.log(req.originalUrl);
-    next();
+  console.log(req.originalUrl);
+  next();
 });
 
-app.get('/', (req, res) => res.send('Hello From Apollo2!'));
+// added static serving for react front end
+app.use(express.static(path.join(__dirname, "build")));
 
-app.get('/image_recognition', image_recognition);
+app.get("/", (req, res) => res.send("Hello From Apollo2!"));
 
-app.get('/pokemon', pokemon);
+app.get("/image_recognition", image_recognition);
 
-app.get('/pokeapi', pokeapi);
+app.get("/pokeapi", pokeapi);
 
 app.listen(port, () => console.log(`Apollow 2 listening on port ${port}!`));

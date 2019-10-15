@@ -22,3 +22,13 @@
 .pokeapi-page {
     text-align: center;
 }
+
+.ir-page {
+    text-align: center;
+    margin: 0 0 auto;
+}
+
+.image {
+    max-width: 500px;
+    max-height: 500px;
+}
