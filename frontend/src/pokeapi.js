@@ -3,119 +3,115 @@
 // accoring to the user imput in the query parameter "num"
 // The name is returned as "res.data.forms[0].name"
 // The image is returned from https://assets.pokemon.com/assets/cms2/img/pokedex/full/${001}.png
-// ** only takes 3-digit **
 
-import React from 'react';
-import axios from 'axios';
+import React from "react";
+import axios from "axios";
 
 const PokeApi = () => {
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [response, setResponse] = React.useState({});
 
-    const [ userInput, setUserInput ] = React.useState('25');
-    const [ pokemonName, setPokemonName ] = React.useState('');
-    const [ pokemonNumber, setPokemonNumber ] = React.useState('');
+  const [userInput, setUserInput] = React.useState("25");
+  const [pokemonName, setPokemonName] = React.useState("");
+  const [pokemonNumber, setPokemonNumber] = React.useState("");
 
-    const addLeadingZeros = (num) => {
-        if(num < 10){
-            let s = num + "";
-            s = "00" + s;
-            return s;
-        }
-        if(num/10 < 10){
-            let s = num + "";
-            s = "0" + s;
-            return s;
-        } else {
-            return num;
-        }
+  const PORT = 4000;
+
+  const addLeadingZeros = num => {
+    if (num < 10) {
+      let s = num + "";
+      s = "00" + s;
+      return s;
     }
-
-    const handleSearch = () => {
-        let input = parseInt(userInput);
-        get_pokemon(input).then((api_response) => {
-            setPokemonName(api_response.result.forms[0].name);
-            setPokemonNumber(addLeadingZeros(api_response.result.id))
-        })
-
-        // let input = {userInput} ;
-        // if (!isNaN(parseInt(input, 10)) && input <= 800 && input >=1){
-        //     // make api call
-        //     get_pokemon(input).then((api_response) => {
-        //         alert(api_response);
-        //     })
-        // } else {
-        //     // handle error
-        // }
+    if (num / 10 < 10) {
+      let s = num + "";
+      s = "0" + s;
+      return s;
+    } else {
+      return num;
     }
+  };
 
-    const get_pokemon = (num) => {
-        return axios({
-            // https://pokeapi.co/api/v2/pokemon/1/
-            url: `https://pokeapi.co/api/v2/pokemon/${num}`,
-            method: 'get',
-            responseType: 'json'
-        })
-        .then((res) => {
-            let status = 'OK';
-            // let result = res
-            let result = res.data || 'Error getting pokemon';
-            return {
-                status: status,
-                result: result
-            };
-        })
-        .catch((err) => {
-            let status = 'ERROR';
-            let result = err.message;
-            return {
-                status: status,
-                result: result
-            };
-        });
-    };
-    
-    // const pokeapi = async (req, res) => {
-    //     let response;
-    //     let params = req.query;
-    //     if ( params.num ) {
-    //         await get_pokemon(params.num)
-    //         .then((api_response) => {
-    //             response = generate_response(api_response.status, params, api_response.result);
-    //         });
-    //     } else {
-    //         response = generate_response('ERROR', params, 'Query parameter \"num\" not given');
-    //     }
-    //     res.send(response);
-    // }
+  const handleSearch = () => {
+    setIsLoading(true);
+    let input = parseInt(userInput);
+    get_pokemon(input).then(api_response => {
+      //   setPokemonName(api_response.result.forms[0].name);
+      setPokemonName(api_response.response);
+      //   setPokemonNumber(addLeadingZeros(api_response.result.id));
+      setPokemonNumber(addLeadingZeros(api_response.params.num));
+    });
+  };
 
-
-
-
-    return(
-        <div className="pokeapi-page">
-            <h2>PokeApi Component</h2>
-            <p>Input a number from 1 to 800 to look up a pokemon.</p>
-            <p></p>
-            <span>
-                <input value={userInput}
-                    onChange={ (e) => setUserInput(e.target.value)}
-                />
-            </span>
-            <span>
-                <button
-                    onClick={() => handleSearch({userInput})}
-                >
-                    Search
-                </button>
-            </span>
-            <div className="pokemonStats">
-                <p>{pokemonName? `Name: ${pokemonName}`: ""}</p>
-                <p>{pokemonNumber? `Pokedex #: ${pokemonNumber}`: ""}</p>
+  const get_pokemon = num => {
+    return axios({
+      // url: `https://pokeapi.co/api/v2/pokemon/${num}`,
+      url: `http://localhost:${PORT}/pokeapi?num=${num}`,
+      method: "get",
+      responseType: "json"
+    })
+      .then(res => {
+        console.log("checkpoint1");
+        console.log(res.data.response);
+        return res.data;
+      })
+      .catch(err => {
+        let status = "ERROR";
+        let result = err.message;
+        return {
+          status: status,
+          result: result
+        };
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
+  const getResponseJsx = res => {
+    if (res.body) {
+      return (
+        <div>
+          <img src={userInput} alt={userInput} class="image" />
+          {res.body.response.map((category, i) => (
+            <div key={i}>
+              <strong>{category.tag.en}</strong>
+              <p>Confidence: {category.confidence}</p>
             </div>
-            <div className="pokemonImage">
-                {pokemonNumber? <img src={`https://assets.pokemon.com/assets/cms2/img/pokedex/full/${pokemonNumber}.png`} alt="pokemon"/>: ''}
-            </div>
+          ))}
         </div>
-    )
-}
+      );
+    }
+    // else is an error with a message.
+    return <div>{res.message}</div>;
+  };
+  return (
+    <div className="pokeapi-page">
+      <h2>PokeApi Component</h2>
+      <p>Input a number from 1 to 800 to look up a pokemon.</p>
+      <p></p>
+      <span>
+        <input value={userInput} onChange={e => setUserInput(e.target.value)} />
+      </span>
+      <span>
+        <button onClick={() => handleSearch({ userInput })}>Search</button>
+      </span>
+      {isLoading ? <div>Loading...</div> : getResponseJsx(response)}
+      <div className="pokemonStats">
+        <p>{pokemonName ? `Name: ${pokemonName}` : ""}</p>
+        <p>{pokemonNumber ? `Pokedex #: ${pokemonNumber}` : ""}</p>
+      </div>
+      <div className="pokemonImage">
+        {pokemonNumber ? (
+          <img
+            src={`https://assets.pokemon.com/assets/cms2/img/pokedex/full/${pokemonNumber}.png`}
+            alt="pokemon"
+          />
+        ) : (
+          ""
+        )}
+      </div>
+    </div>
+  );
+};
 
-export default PokeApi
+export default PokeApi;
