@@ -1,15 +1,8 @@
-// this is the endpoint that calls the api `https://pokeapi.co/api/v2/pokemon/${num}`.
-// This route will return the name and image of the pokemon
-// accoring to the user imput in the query parameter "num"
-// The name is returned as "res.data.forms[0].name"
-// The image is returned from https://assets.pokemon.com/assets/cms2/img/pokedex/full/${001}.png
-
 import React from "react";
 import axios from "axios";
 
 const PokeApi = () => {
   const [isLoading, setIsLoading] = React.useState(false);
-  const [response, setResponse] = React.useState({});
 
   const [userInput, setUserInput] = React.useState("25");
   const [pokemonName, setPokemonName] = React.useState("");
@@ -36,10 +29,8 @@ const PokeApi = () => {
     setIsLoading(true);
     let input = parseInt(userInput);
     get_pokemon(input).then(api_response => {
-      //   setPokemonName(api_response.result.forms[0].name);
       setPokemonName(api_response.response);
-      //   setPokemonNumber(addLeadingZeros(api_response.result.id));
-      setPokemonNumber(addLeadingZeros(api_response.params.num));
+      setPokemonNumber(addLeadingZeros(input));
     });
   };
 
@@ -67,23 +58,7 @@ const PokeApi = () => {
         setIsLoading(false);
       });
   };
-  const getResponseJsx = res => {
-    if (res.body) {
-      return (
-        <div>
-          <img src={userInput} alt={userInput} class="image" />
-          {res.body.response.map((category, i) => (
-            <div key={i}>
-              <strong>{category.tag.en}</strong>
-              <p>Confidence: {category.confidence}</p>
-            </div>
-          ))}
-        </div>
-      );
-    }
-    // else is an error with a message.
-    return <div>{res.message}</div>;
-  };
+
   return (
     <div className="pokeapi-page">
       <h2>PokeApi Component</h2>
@@ -95,7 +70,8 @@ const PokeApi = () => {
       <span>
         <button onClick={() => handleSearch({ userInput })}>Search</button>
       </span>
-      {isLoading ? <div>Loading...</div> : getResponseJsx(response)}
+      {/* {isLoading ? <div>Loading...</div> : getResponseJsx(response)} */}
+      {isLoading ? <div>Loading...</div> : <div>Cannot get Pokemon</div>}
       <div className="pokemonStats">
         <p>{pokemonName ? `Name: ${pokemonName}` : ""}</p>
         <p>{pokemonNumber ? `Pokedex #: ${pokemonNumber}` : ""}</p>
