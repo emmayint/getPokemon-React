@@ -70,8 +70,7 @@ const PokeApi = () => {
       <span>
         <button onClick={() => handleSearch({ userInput })}>Search</button>
       </span>
-      {/* {isLoading ? <div>Loading...</div> : getResponseJsx(response)} */}
-      {isLoading ? <div>Loading...</div> : <div>Cannot get Pokemon</div>}
+      {isLoading ? <div>Loading...</div> : <div></div>}
       <div className="pokemonStats">
         <p>{pokemonName ? `Name: ${pokemonName}` : ""}</p>
         <p>{pokemonNumber ? `Pokedex #: ${pokemonNumber}` : ""}</p>
